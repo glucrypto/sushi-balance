@@ -29,8 +29,8 @@ const MyButton = styled(Button)({
     maxWidth:'120em'
   });
   
-  const MyTableDebug = styled(Table)({
-    maxWidth:'20em'
+  const MyTablePools = styled(Table)({
+    maxWidth:'50em'
   });
 class Balance extends React.Component {
   constructor(props){
@@ -49,7 +49,7 @@ class Balance extends React.Component {
     let bar = await ss.getBar(window.ethereum.selectedAddress);
     await bar.poll();
 
-    //console.log(ss);//parseFloat(Web3.utils.fromWei(ss.pools[12].totalSushiPerBlock.toString()),'ether'),parseFloat(Web3.utils.fromWei(ss.pools[12].devShare.toString()),'ether'))
+    console.log(bar);//parseFloat(Web3.utils.fromWei(ss.pools[12].totalSushiPerBlock.toString()),'ether'),parseFloat(Web3.utils.fromWei(ss.pools[12].devShare.toString()),'ether'))
     // DEBUGGING
     this.setState({
       baseSushiPerBlock:parseFloat(Web3.utils.fromWei(ss.base.sushiPerBlock.toString()),'ether'),
@@ -110,13 +110,14 @@ class Balance extends React.Component {
       priceETHUSD:myETHUSD,
       priceTotal:totalUSD,
       poolTokensNotStaked:poolTokensNotStaked,
-      poolTokensStaked:poolTokensStaked,
-      sushiLPStaked:sushiLPStaked,
+      poolTokensStaked:poolTokensStaked.toFixed(4),
+      sushiLPStaked:sushiLPStaked.toFixed(4),
       poolTokensTotal:poolTokensTotal.toFixed(4),
       poolTokensPending:poolTokensTotalPending.toFixed(4),
       sushiInSushiPoolETH:(sushiInSushiPoolETH).toFixed(4),
       ethInSushiPoolETH:ethInSushiPoolETH.toFixed(4),
-      xsushi:(parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))).toFixed(2),
+      xsushiStaked:(parseFloat(Web3.utils.fromWei(bar.xsushi.toString(),'ether'))).toFixed(4),
+      xsushiToBeCollected:(parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))-(parseFloat(Web3.utils.fromWei(bar.xsushi.toString(),'ether')))).toFixed(4),
       address: ss.base.sushi,
     })
     this.setState({
@@ -160,12 +161,10 @@ class Balance extends React.Component {
                   <TableCell align="center">ETH USD Value</TableCell>
                   <TableCell align="center">Total USD Value</TableCell>
                   <TableCell align="center">Wallet Balance</TableCell>
-                  <TableCell align="center">xSushi</TableCell>
+                  <TableCell align="center">xSushi Staked</TableCell>
+                  <TableCell align="center">xSushi Rewards</TableCell>
                   <TableCell align="center">Amount To be Harvested</TableCell>
                   <TableCell align="center">Sushi Pool (Staked)</TableCell>
-                  <TableCell align="center">Total LP Tokens Not Staked</TableCell>
-                  <TableCell align="center">Total LP tokens Staked</TableCell>
-                  <TableCell align="center">Total ETH Value Staked in all Pools</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -178,17 +177,40 @@ class Balance extends React.Component {
                     <TableCell align="center" component="th" scope="row"> ${row.priceETHUSD} </TableCell>
                     <TableCell align="center" component="th" scope="row"> ${row.priceTotal}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.walletBalance} {row.logo} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.xsushi} {row.logo}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.xsushiStaked} {row.logo}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.xsushiToBeCollected} {row.logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensPending} {row.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.sushiLPStaked} SLP = {row.sushiInSushiPoolETH} {row.logo} & {row.ethInSushiPoolETH} ETH</TableCell>
+                  </TableRow>
+                  ))}
+              </TableBody>
+            </MyTable>
+          </TableContainer>
+          <br/>
+          <br/>
+          Pool / LP info:
+          <br/>
+          <TableContainer>
+            <MyTablePools aria-label="simple table" size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Total LP Tokens Not Staked</TableCell>
+                  <TableCell align="center">Total LP tokens Staked</TableCell>
+                  <TableCell align="center">Total ETH Value Staked in all Pools</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {this.state.coinArr.map((row,index) => (
+                  <TableRow key={index}>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensNotStaked} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} LP</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensTotal} ETH </TableCell>
                   </TableRow>
                   ))}
               </TableBody>
-            </MyTable>
+            </MyTablePools>
           </TableContainer>
+
           <br/>
           <br/>
           <br/>
@@ -213,6 +235,8 @@ class Balance extends React.Component {
           In <b>beta</b>, still verifying calcs.
           <br/>
           Source: <a target="_blank" href="https://github.com/cryptogluon/sushi-balance">https://github.com/cryptogluon/sushi-balance</a>
+          <br/>
+          Props to JS lib for most of the web3 hooks: <a target="_blank" href="https://github.com/bartjman/SushiSwapJs">https://github.com/bartjman/SushiSwapJs</a>
           <br/>
           Twitter: <a target="_blank" href="https://twitter.com/cryptogluon">https://twitter.com/cryptogluon</a>
           <br/>
