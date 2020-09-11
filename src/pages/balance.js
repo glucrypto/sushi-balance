@@ -11,6 +11,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
+
+import detectEthereumProvider from '@metamask/detect-provider'
 import {SushiSwap} from '../lib/SushiSwapJs/sushiswap.js'
 const Web3 = require("web3");
 
@@ -129,7 +131,9 @@ class Balance extends React.Component {
   }
 
   async connectToMetaMask(){
-    if (typeof window.ethereum !== 'undefined') {
+    const provider = await detectEthereumProvider()
+    if(provider){
+    //if (typeof window.ethereum !== 'undefined') {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       let web3 = new Web3(window.ethereum);
       this.buildSushiSwap(web3);
@@ -140,7 +144,8 @@ class Balance extends React.Component {
   render() {
     return (
       <div>
-      <MyButton variant="outlined" color="white" onClick={() => this.connectToMetaMask()}>Connect To MetaMask</MyButton>
+      <MyButton variant="outlined" color="white" onClick={() => this.connectToMetaMask()}>Connect To MetaMask</MyButton><br/><br/>
+      <MyButton href="https://metamask.app.link/dapp/sushi-balance.herokuapp.com/" variant="outlined" color="white">Connect To MetaMask Mobile</MyButton>
         <br/>
         <br/>
         <br/>
