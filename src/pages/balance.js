@@ -146,9 +146,9 @@ class Balance extends React.Component {
     return (
       <div>
       <MyButton variant="outlined" color="white" onClick={() => this.connectToMetaMask()}>Connect To MetaMask</MyButton><br/><br/>
-      <MyButton href="https://metamask.app.link/dapp/sushi-balance.herokuapp.com/" variant="outlined" color="white">Connect To MetaMask Mobile</MyButton>
-        <br/>
-        <br/>
+      {/*<MyButton href="https://metamask.app.link/dapp/sushi-balance.herokuapp.com/" variant="outlined" color="white">Connect To MetaMask Mobile</MyButton>*/}
+      {/*  <br/>
+        <br/>*/}
         <br/>
           <TableContainer component={Paper}>
             <MyTable aria-label="simple table" size="small">
