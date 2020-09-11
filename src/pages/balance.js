@@ -24,11 +24,11 @@ const MyButton = styled(Button)({
   }
 });
   const MyTable = styled(Table)({
-    maxWidth:'100em'
+    maxWidth:'120em'
   });
   
   const MyTableDebug = styled(Table)({
-    maxWidth:'50em'
+    maxWidth:'20em'
   });
 class Balance extends React.Component {
   constructor(props){
@@ -69,8 +69,8 @@ class Balance extends React.Component {
     let totalValue = 0;
     let sushiInSushiPoolETH=0;
     let ethInSushiPoolETH=0;
-
-    //console.log(ss.base.eth_rate)
+    let poolTokensNotStaked=0;
+    let poolTokensStaked=0;
 
     for(let i=0;i<ss.pools.length;i++){
       poolTokensTotal+=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken0.toString(),'ether')) + parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken1.toString(),'ether'))
@@ -79,17 +79,23 @@ class Balance extends React.Component {
         ethInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken1.toString(),'ether'));
       }
       poolTokensTotalPending+=parseFloat(Web3.utils.fromWei(ss.pools[i].pending.toString(),'ether'))
+      poolTokensNotStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].uniBalance.toString(),'ether'))
+      poolTokensStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
+      
+      //console.log(ss.pools[i].shareOfPool)
       poolTokens.push({
         poolName:ss.pools[i].name,
         userBalanceLPs:ss.pools[i].balance
       })
+
     }
     let mySushi = (parseFloat(Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether')) + (parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))) + sushiInSushiPoolETH).toFixed(4);
     let priceUSD = (parseFloat(Web3.utils.fromWei(ss.base.sushiValueInCurrency.toString(),'ether'))*1000000000000).toFixed(2);
     let mySushiUSD = (mySushi * priceUSD).toFixed(2);
     let myETHUSD = (parseFloat(ethInSushiPoolETH) * parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000).toFixed(2);
-    console.log(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))
+    //console.log(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))
     let totalUSD = (parseFloat(myETHUSD) + parseFloat(mySushiUSD)).toFixed(2);
+    
     coinArr.push({
       name:'sushi',
       logo: ss.pools[ss.sushi_pool].logo,
@@ -99,6 +105,8 @@ class Balance extends React.Component {
       priceUSD:priceUSD,
       priceETHUSD:myETHUSD,
       priceTotal:totalUSD,
+      poolTokensNotStaked:poolTokensNotStaked,
+      poolTokensStaked:poolTokensStaked,
       poolTokensTotal:poolTokensTotal.toFixed(4),
       poolTokensPending:poolTokensTotalPending.toFixed(4),
       sushiInSushiPoolETH:(sushiInSushiPoolETH - poolTokensTotalPending).toFixed(4),
@@ -146,7 +154,8 @@ class Balance extends React.Component {
                   <TableCell align="center">Wallet Balance</TableCell>
                   <TableCell align="center">xSushi</TableCell>
                   <TableCell align="center">Amount To be Harvested</TableCell>
-                  <TableCell align="center">Sushi Pool</TableCell>
+                  <TableCell align="center">Total LP Tokens Not Staked</TableCell>
+                  <TableCell align="center">Sushi Pool (Staked)</TableCell>
                   <TableCell align="center">Total Amt Staked in all Pools</TableCell>
                 </TableRow>
               </TableHead>
@@ -162,7 +171,8 @@ class Balance extends React.Component {
                     <TableCell align="center" component="th" scope="row"> {row.walletBalance} {row.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.xsushi} {row.logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensPending} {row.logo} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.sushiInSushiPoolETH} {row.logo} & {row.ethInSushiPoolETH} ETH</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.poolTokensNotStaked} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} LPs = {row.sushiInSushiPoolETH} {row.logo} & {row.ethInSushiPoolETH} ETH</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensTotal} ETH </TableCell>
                   </TableRow>
                   ))}
