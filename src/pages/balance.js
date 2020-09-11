@@ -47,7 +47,7 @@ class Balance extends React.Component {
     let bar = await ss.getBar(window.ethereum.selectedAddress);
     await bar.poll();
 
-    console.log(ss);//parseFloat(Web3.utils.fromWei(ss.pools[12].totalSushiPerBlock.toString()),'ether'),parseFloat(Web3.utils.fromWei(ss.pools[12].devShare.toString()),'ether'))
+    //console.log(ss);//parseFloat(Web3.utils.fromWei(ss.pools[12].totalSushiPerBlock.toString()),'ether'),parseFloat(Web3.utils.fromWei(ss.pools[12].devShare.toString()),'ether'))
     // DEBUGGING
     this.setState({
       baseSushiPerBlock:parseFloat(Web3.utils.fromWei(ss.base.sushiPerBlock.toString()),'ether'),
@@ -76,22 +76,22 @@ class Balance extends React.Component {
     for(let i=0;i<ss.pools.length;i++){
       poolTokensTotal+=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken0.toString(),'ether')) + parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken1.toString(),'ether'))
       if(i === ss.sushi_pool){
-        sushiInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken0.toString(),'ether')) * parseFloat(Web3.utils.fromWei(ss.base.sushiRate.toString(),'ether')); 
-        ethInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken1.toString(),'ether'));
+        sushiInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].userStakedToken0.toString(),'ether')); 
+        ethInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].userStakedToken1.toString(),'ether'));
         sushiLPStaked=parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
       }
       poolTokensTotalPending+=parseFloat(Web3.utils.fromWei(ss.pools[i].pending.toString(),'ether'))
       poolTokensNotStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].uniBalance.toString(),'ether'))
       poolTokensStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
       
-      //console.log(ss.pools[i].shareOfPool)
+      //console.log(poolTokensTotalPending)
       poolTokens.push({
         poolName:ss.pools[i].name,
         userBalanceLPs:ss.pools[i].balance
       })
 
     }
-    let mySushi = (parseFloat(Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether')) + (parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))) + sushiInSushiPoolETH).toFixed(4);
+    let mySushi = (parseFloat(Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether')) + (parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))) + sushiInSushiPoolETH  + poolTokensTotalPending).toFixed(4);
     let priceUSD = (parseFloat(Web3.utils.fromWei(ss.base.sushiValueInCurrency.toString(),'ether'))*1000000000000).toFixed(2);
     let mySushiUSD = (mySushi * priceUSD).toFixed(2);
     let myETHUSD = (parseFloat(ethInSushiPoolETH) * parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000).toFixed(2);
@@ -112,7 +112,7 @@ class Balance extends React.Component {
       sushiLPStaked:sushiLPStaked,
       poolTokensTotal:poolTokensTotal.toFixed(4),
       poolTokensPending:poolTokensTotalPending.toFixed(4),
-      sushiInSushiPoolETH:(sushiInSushiPoolETH - poolTokensTotalPending).toFixed(4),
+      sushiInSushiPoolETH:(sushiInSushiPoolETH).toFixed(4),
       ethInSushiPoolETH:ethInSushiPoolETH.toFixed(4),
       xsushi:(parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))).toFixed(2),
       address: ss.base.sushi,
@@ -214,59 +214,7 @@ class Balance extends React.Component {
           <br/>
           <br/>
           <br/>
-          Debugging:<br/>
-          <TableContainer component={Paper}>
-          <MyTableDebug aria-label="simple table" size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                  <TableRow key={1}>
-                    <TableCell align="center" component="th" scope="row"> base.sushiPerBlock </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.baseSushiPerBlock}</TableCell>
-                  </TableRow>
-                  <TableRow key={2}>
-                    <TableCell align="center" component="th" scope="row"> pool.sushiReward</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.sushiReward}</TableCell>
-                    </TableRow>
-                  <TableRow key={22}>
-                    <TableCell align="center" component="th" scope="row"> pool.devShare</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.devShare}</TableCell>
-                    </TableRow>
-                  <TableRow key={3}>
-                    <TableCell align="center" component="th" scope="row"> pool.sushiRewardInETH </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.sushiRewardInETH}</TableCell>
-                    </TableRow>
-                  <TableRow key={4}>
-                    <TableCell align="center" component="th" scope="row"> pool.sushiRewardInCurrency</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.sushiRewardInCurrency}</TableCell>
-                    </TableRow>
-                  <TableRow key={5}>
-                    <TableCell align="center" component="th" scope="row"> pool.totalSushiPerBlock</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.totalSushiPerBlock}</TableCell>
-                    </TableRow>
-                  <TableRow key={6}>
-                    <TableCell align="center" component="th" scope="row"> pool.hourlyROI</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.hourlyROI}</TableCell>
-                    </TableRow>
-                  <TableRow key={7}>
-                    <TableCell align="center" component="th" scope="row"> pool.dailyROI</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.dailyROI}</TableCell>
-                    </TableRow>
-                  <TableRow key={8}>
-                    <TableCell align="center" component="th" scope="row"> pool.hourlyInCurrency</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.hourlyInCurrency}</TableCell>
-                    </TableRow>
-                  <TableRow key={9}>
-                    <TableCell align="center" component="th" scope="row"> pool.dailyInCurrency</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.dailyInCurrency}</TableCell>
-                  </TableRow>
-              </TableBody>
-            </MyTableDebug>
-          </TableContainer>
+
            
 
 
