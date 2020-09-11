@@ -71,12 +71,14 @@ class Balance extends React.Component {
     let ethInSushiPoolETH=0;
     let poolTokensNotStaked=0;
     let poolTokensStaked=0;
+    let sushiLPStaked=0;
 
     for(let i=0;i<ss.pools.length;i++){
       poolTokensTotal+=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken0.toString(),'ether')) + parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken1.toString(),'ether'))
       if(i === ss.sushi_pool){
         sushiInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken0.toString(),'ether')) * parseFloat(Web3.utils.fromWei(ss.base.sushiRate.toString(),'ether')); 
         ethInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken1.toString(),'ether'));
+        sushiLPStaked=parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
       }
       poolTokensTotalPending+=parseFloat(Web3.utils.fromWei(ss.pools[i].pending.toString(),'ether'))
       poolTokensNotStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].uniBalance.toString(),'ether'))
@@ -107,6 +109,7 @@ class Balance extends React.Component {
       priceTotal:totalUSD,
       poolTokensNotStaked:poolTokensNotStaked,
       poolTokensStaked:poolTokensStaked,
+      sushiLPStaked:sushiLPStaked,
       poolTokensTotal:poolTokensTotal.toFixed(4),
       poolTokensPending:poolTokensTotalPending.toFixed(4),
       sushiInSushiPoolETH:(sushiInSushiPoolETH - poolTokensTotalPending).toFixed(4),
@@ -154,9 +157,10 @@ class Balance extends React.Component {
                   <TableCell align="center">Wallet Balance</TableCell>
                   <TableCell align="center">xSushi</TableCell>
                   <TableCell align="center">Amount To be Harvested</TableCell>
-                  <TableCell align="center">Total LP Tokens Not Staked</TableCell>
                   <TableCell align="center">Sushi Pool (Staked)</TableCell>
-                  <TableCell align="center">Total Amt Staked in all Pools</TableCell>
+                  <TableCell align="center">Total LP Tokens Not Staked</TableCell>
+                  <TableCell align="center">Total LP tokens Staked</TableCell>
+                  <TableCell align="center">Total ETH Value Staked in all Pools</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -171,8 +175,9 @@ class Balance extends React.Component {
                     <TableCell align="center" component="th" scope="row"> {row.walletBalance} {row.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.xsushi} {row.logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensPending} {row.logo} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.sushiLPStaked} SLP = {row.sushiInSushiPoolETH} {row.logo} & {row.ethInSushiPoolETH} ETH</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensNotStaked} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} LPs = {row.sushiInSushiPoolETH} {row.logo} & {row.ethInSushiPoolETH} ETH</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} LP</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensTotal} ETH </TableCell>
                   </TableRow>
                   ))}
@@ -190,6 +195,9 @@ class Balance extends React.Component {
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- get LP tokens: <a target="_blank" href="https://help.sushidocs.com/products/sushiswap-pools">https://help.sushidocs.com/products/sushiswap-pools</a> (will show in LP's unstaked)<br/>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Stake/Farm: <a target="_blank" href="https://sushiswapclassic.org/farms">https://sushiswapclassic.org/farms</a> (only Sushi Pool supported on this UI at the moment, Amount to be Harvested shows rewards)<br/>
           &nbsp;&nbsp;2. Add to Sushi Bar to get 0.5 of all trading fees in xsushi  <a target="_blank" href="https://sushiswapclassic.org/staking">https://sushiswapclassic.org/staking</a> (will show in xsushi balance)<br/>
+          <br/>
+          Voting: Sushi LP tokens can be used for voting (SUSHIPOWAH) if you have them by a certain block when a snapshot is taken, more info: <a target="_blank" href="https://help.sushidocs.com/faqs/governance">https://help.sushidocs.com/faqs/governance</a><br/>
+          <br/>
           Questions/help refer to: <a target="_blank" href="https://help.sushidocs.com/">https://help.sushidocs.com</a> (will show in Lp's unstaked)<br/>
           
 
