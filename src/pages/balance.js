@@ -183,11 +183,25 @@ class Balance extends React.Component {
           <br/>
           <br/>
           <br/>
-          In beta, still verifying calcs.
+          <b>How To:</b><br/><br/>
+          Buy Sushi <a target="_blank" href="https://exchange.sushiswapclassic.org/">https://exchange.sushiswapclassic.org/</a> (shows up in wallet balance)<br/>
+          Two options:<br/>
+          &nbsp;&nbsp;1.Stake to get staking rewards in desired pool<br/> 
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- get LP tokens: <a target="_blank" href="https://help.sushidocs.com/products/sushiswap-pools">https://help.sushidocs.com/products/sushiswap-pools</a> (will show in LP's unstaked)<br/>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Stake/Farm: <a target="_blank" href="https://sushiswapclassic.org/farms">https://sushiswapclassic.org/farms</a> (only Sushi Pool supported on this UI at the moment, Amount to be Harvested shows rewards)<br/>
+          &nbsp;&nbsp;2. Add to Sushi Bar to get 0.5 of all trading fees in xsushi  <a target="_blank" href="https://sushiswapclassic.org/staking">https://sushiswapclassic.org/staking</a> (will show in xsushi balance)<br/>
+          Questions/help refer to: <a target="_blank" href="https://help.sushidocs.com/">https://help.sushidocs.com</a> (will show in Lp's unstaked)<br/>
+          
+
           <br/>
-          Source: <a href="https://github.com/cryptogluon/sushi-balance">https://github.com/cryptogluon/sushi-balance</a>
           <br/>
-          Twitter: <a href="https://twitter.com/cryptogluon">https://twitter.com/cryptogluon</a>
+          <br/>
+          <br/>
+          In <b>beta</b>, still verifying calcs.
+          <br/>
+          Source: <a target="_blank" href="https://github.com/cryptogluon/sushi-balance">https://github.com/cryptogluon/sushi-balance</a>
+          <br/>
+          Twitter: <a target="_blank" href="https://twitter.com/cryptogluon">https://twitter.com/cryptogluon</a>
           <br/>
           <br/>
           <br/>
