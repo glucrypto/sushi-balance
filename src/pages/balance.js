@@ -118,7 +118,7 @@ class Balance extends React.Component {
       this.SushiSwapEventEmitter(web3);
     }
   }
-
+  
   render() {
     return (
       <div>
