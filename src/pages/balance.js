@@ -221,7 +221,7 @@ class Balance extends React.Component {
           &nbsp;&nbsp;1.Stake to get staking rewards in desired pool<br/> 
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- get LP tokens: <a target="_blank" href="https://help.sushidocs.com/products/sushiswap-pools">https://help.sushidocs.com/products/sushiswap-pools</a> (will show in LP's unstaked)<br/>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Stake/Farm: <a target="_blank" href="https://sushiswapclassic.org/farms">https://sushiswapclassic.org/farms</a> (only Sushi Pool supported on this UI at the moment, Amount to be Harvested shows rewards)<br/>
-          &nbsp;&nbsp;2. Add to Sushi Bar to get 0.5 of all trading fees in xsushi  <a target="_blank" href="https://sushiswapclassic.org/staking">https://sushiswapclassic.org/staking</a> (will show in xsushi balance)<br/>
+          &nbsp;&nbsp;2. Add to Sushi Bar to get 0.5 of all trading fees in xsushi  <a target="_blank" href="https://sushiswapclassic.org/staking">https://sushiswapclassic.org/staking</a><br/>
           <br/>
           Voting: Sushi LP tokens can be used for voting (SUSHIPOWAH) if you have them by a certain block when a snapshot is taken, more info: <a target="_blank" href="https://help.sushidocs.com/faqs/governance">https://help.sushidocs.com/faqs/governance</a><br/>
           <br/>
