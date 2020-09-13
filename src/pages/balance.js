@@ -14,6 +14,12 @@ import Avatar from '@material-ui/core/Avatar';
 
 import detectEthereumProvider from '@metamask/detect-provider'
 import {SushiSwap} from '../lib/SushiSwapJs/sushiswap.js'
+
+import {Navbar,Nav} from 'react-bootstrap';
+import IconButton from '@material-ui/core/IconButton';
+import GitHubIcon from '@material-ui/icons/GitHub';
+import TwitterIcon from '@material-ui/icons/Twitter';
+
 const Web3 = require("web3");
 
 const MyButton = styled(Button)({
@@ -179,8 +185,25 @@ class Balance extends React.Component {
   
   render() {
     return (
+      <div>
+      <Navbar expand="lg" className="balance-navbar">
+        <Navbar.Brand href="#home" className="balance-navbar-content-left">Sushi Balance</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+          </Nav>
+          <div className="balance-navbar-content-right">
+            <MyButton variant="outlined" color="white" onClick={() => this.connectToMetaMask()}>Connect To MetaMask</MyButton>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <IconButton target="_blank" href="http://twitter.com/cryptogluon">
+              <TwitterIcon/>
+              </IconButton>
+            <IconButton target="_blank" href="https://github.com/cryptogluon/sushi-balance">
+            <GitHubIcon/>
+            </IconButton>
+          </div>
+        </Navbar.Collapse>
+      </Navbar>
       <div class="balance-main">
-      <MyButton variant="outlined" color="white" onClick={() => this.connectToMetaMask()}>Connect To MetaMask</MyButton><br/><br/>
       {/*<MyButton href="https://metamask.app.link/dapp/sushi-balance.herokuapp.com/" variant="outlined" color="white">Connect To MetaMask Mobile</MyButton>*/}
       {/*  <br/>
         <br/>*/}
@@ -274,28 +297,11 @@ class Balance extends React.Component {
             </Table>
           </TableContainer>
           </div>
-          <div class="item-info">
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          <b>Questions/help refer to:</b> <a target="_blank" href="https://help.sushidocs.com/">https://help.sushidocs.com</a> (will show in Lp's unstaked)<br/>
-          In <b>beta</b>, still verifying calcs.
-          <br/>
-          Source: <a target="_blank" href="https://github.com/cryptogluon/sushi-balance">https://github.com/cryptogluon/sushi-balance</a>
-          <br/>
-          Props to barjman for most of the web3 hooks: <a target="_blank" href="https://github.com/bartjman/SushiSwapJs">https://github.com/bartjman/SushiSwapJs</a>
-          <br/>
-          Twitter: <a target="_blank" href="https://twitter.com/cryptogluon">https://twitter.com/cryptogluon</a>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          </div>
           </div>
            
 
 
+        </div>
         </div>
 
       );
