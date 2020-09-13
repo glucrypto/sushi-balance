@@ -1,0 +1,32 @@
+
+.main-grid{
+	display:grid;
+	grid-gap:4em;
+	grid-row:4;
+	grid-column:2;
+	grid-template-columns: 50em 50em;
+	grid-template-rows: auto;
+}
+
+
+.item-top{
+	grid-row: 1;
+	grid-column: 1 / span 2;
+}
+
+
+
+.item-pool{
+	grid-row: 2;
+	grid-column: 2;
+}
+
+.item-xsushi{
+	grid-row: 2;
+	grid-column: 1;
+}
+
+.item-info{
+	grid-row: 4;
+	grid-column: 1;
+}

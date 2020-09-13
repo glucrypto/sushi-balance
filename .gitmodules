@@ -1,0 +1,3 @@
+[submodule "src/lib/SushiSwapJs"]
+	path = src/lib/SushiSwapJs
+	url = git@github.com:cryptogluon/SushiSwapJs.git

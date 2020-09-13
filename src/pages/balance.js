@@ -25,13 +25,7 @@ const MyButton = styled(Button)({
     color:'rgb(91, 57, 38)'
   }
 });
-  const MyTable = styled(Table)({
-    maxWidth:'120em'
-  });
-  
-  const MyTablePools = styled(Table)({
-    maxWidth:'50em'
-  });
+
 class Balance extends React.Component {
   constructor(props){
   	super(props);
@@ -150,8 +144,10 @@ class Balance extends React.Component {
       {/*  <br/>
         <br/>*/}
         <br/>
+        <div class="main-grid">
+          <div class="item-top">
           <TableContainer component={Paper}>
-            <MyTable aria-label="simple table" size="small">
+            <Table aria-label="simple table" size="small">
               <TableHead>
                 <TableRow>
                   <TableCell align="center">Asset</TableCell>
@@ -184,14 +180,16 @@ class Balance extends React.Component {
                   </TableRow>
                   ))}
               </TableBody>
-            </MyTable>
+            </Table>
           </TableContainer>
+          </div>
+
+          <div class="item-xsushi">
           <br/>
-          <br/>
-          Pool / LP info:
+          xSushi Calcs
           <br/>
           <TableContainer>
-            <MyTablePools aria-label="simple table" size="small">
+            <Table aria-label="simple table" size="small">
               <TableHead>
                 <TableRow>
                   <TableCell align="center">Total LP Tokens Not Staked</TableCell>
@@ -208,13 +206,37 @@ class Balance extends React.Component {
                   </TableRow>
                   ))}
               </TableBody>
-            </MyTablePools>
+            </Table>
           </TableContainer>
+          
+          </div>
 
+          <div class="item-pool">
           <br/>
+          Pool / LP info:
           <br/>
-          <br/>
-          <br/>
+          <TableContainer>
+            <Table aria-label="simple table" size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Total LP Tokens Not Staked</TableCell>
+                  <TableCell align="center">Total LP tokens Staked</TableCell>
+                  <TableCell align="center">Total ETH Value Staked in all Pools</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {this.state.coinArr.map((row,index) => (
+                  <TableRow key={index}>
+                    <TableCell align="center" component="th" scope="row"> {row.poolTokensNotStaked} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} LP</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.poolTokensTotal} ETH </TableCell>
+                  </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          </div>
+          <div class="item-info">
           <b>How To:</b><br/><br/>
           Buy Sushi <a target="_blank" href="https://exchange.sushiswapclassic.org/">https://exchange.sushiswapclassic.org/</a> (shows up in wallet balance)<br/>
           Two options:<br/>
@@ -243,7 +265,8 @@ class Balance extends React.Component {
           <br/>
           <br/>
           <br/>
-
+          </div>
+          </div>
            
 
 
