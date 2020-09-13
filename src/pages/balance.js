@@ -26,11 +26,45 @@ const MyButton = styled(Button)({
   }
 });
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2
+})
+
+const sushiFormatter = new Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  minimumFractionDigits: 2
+})
+
 class Balance extends React.Component {
   constructor(props){
   	super(props);
     this.state = {
-      coinArr:[]
+      coinArr:{
+        name:'sushi',
+        logo: '',
+        mySushi:0,
+        myUSD:0,
+        walletBalance:0,
+        priceUSD:0,
+        priceETHUSD:0,
+        priceTotal:0,
+        poolTokensNotStaked:0,
+        poolTokensStaked:0,
+        sushiLPStaked:0,
+        poolTokensTotal:0,
+        poolTokensPending:0,
+        sushiInSushiPoolETH:0,
+        ethInSushiPoolETH:0,
+        xsushiStaked:0,
+        xsushiToBeCollected:0,
+        xsushiTotal:0,
+        sushiInBar:0,
+        xsushiValInSushi:0,
+        barSushiUSD:0,
+        address: 0,
+      }
     }
     this.buildSushiSwap = this.buildSushiSwap.bind(this);
     this.SushiSwapEventEmitter = this.SushiSwapEventEmitter.bind(this);
@@ -38,7 +72,7 @@ class Balance extends React.Component {
   }
   async buildSushiSwap(web3){
     let ss = new SushiSwap(web3)
-    let coinArr = [];
+    let coinArr = {};
     await ss.getInfo(window.ethereum.selectedAddress)
     let bar = await ss.getBar(window.ethereum.selectedAddress);
     await bar.poll();
@@ -88,21 +122,24 @@ class Balance extends React.Component {
 
     }
     let mySushi = (parseFloat(Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether')) + (parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))) + sushiInSushiPoolETH  + poolTokensTotalPending).toFixed(4);
-    let priceUSD = (parseFloat(Web3.utils.fromWei(ss.base.sushiValueInCurrency.toString(),'ether'))*1000000000000).toFixed(2);
-    let mySushiUSD = (mySushi * priceUSD).toFixed(2);
-    let myETHUSD = (parseFloat(ethInSushiPoolETH) * parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000).toFixed(2);
+    let priceUSD = parseFloat(Web3.utils.fromWei(ss.base.sushiValueInCurrency.toString(),'ether'))*1000000000000;
+    let mySushiUSD = parseFloat(mySushi * priceUSD);
+    let myETHUSD = parseFloat(ethInSushiPoolETH) * parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000;
     //console.log(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))
-    let totalUSD = (parseFloat(myETHUSD) + parseFloat(mySushiUSD)).toFixed(2);
-    
-    coinArr.push({
+    let totalUSD = parseFloat(myETHUSD) + parseFloat(mySushiUSD);
+    let xsushiValInSushi = (parseFloat(Web3.utils.fromWei(bar.barSushi.toString(),'ether')) / parseFloat(Web3.utils.fromWei(bar.totalXSushi.toString(),'ether'))).toFixed(4)
+    //let xsushiValInUSD = xsushiValInSushi(parseFloat(Web3.utils.fromWei(bar.barSushi.toString(),'ether'))).toFixed(4);
+    let barSushiUSD = (parseFloat(Web3.utils.fromWei(bar.barSushi.toString(),'ether'))*priceUSD);
+
+    coinArr = {
       name:'sushi',
       logo: ss.pools[ss.sushi_pool].logo,
       mySushi:mySushi,
-      myUSD:mySushiUSD,
+      myUSD:formatter.format(mySushiUSD),
       walletBalance:Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether'),
-      priceUSD:priceUSD,
-      priceETHUSD:myETHUSD,
-      priceTotal:totalUSD,
+      priceUSD:formatter.format(priceUSD),
+      priceETHUSD:formatter.format(myETHUSD),
+      priceTotal:formatter.format(totalUSD),
       poolTokensNotStaked:poolTokensNotStaked,
       poolTokensStaked:poolTokensStaked.toFixed(4),
       sushiLPStaked:sushiLPStaked.toFixed(4),
@@ -112,8 +149,12 @@ class Balance extends React.Component {
       ethInSushiPoolETH:ethInSushiPoolETH.toFixed(4),
       xsushiStaked:(parseFloat(Web3.utils.fromWei(bar.xsushi.toString(),'ether'))).toFixed(4),
       xsushiToBeCollected:(parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))-(parseFloat(Web3.utils.fromWei(bar.xsushi.toString(),'ether')))).toFixed(4),
+      xsushiTotal:sushiFormatter.format(parseFloat(Web3.utils.fromWei(bar.totalXSushi.toString(),'ether'))),
+      sushiInBar:sushiFormatter.format(parseFloat(Web3.utils.fromWei(bar.barSushi.toString(),'ether'))),
+      xsushiValInSushi:xsushiValInSushi,
+      barSushiUSD:formatter.format(barSushiUSD),
       address: ss.base.sushi,
-    })
+    }
     this.setState({
       coinArr:coinArr
     })
@@ -138,7 +179,7 @@ class Balance extends React.Component {
   
   render() {
     return (
-      <div>
+      <div class="balance-main">
       <MyButton variant="outlined" color="white" onClick={() => this.connectToMetaMask()}>Connect To MetaMask</MyButton><br/><br/>
       {/*<MyButton href="https://metamask.app.link/dapp/sushi-balance.herokuapp.com/" variant="outlined" color="white">Connect To MetaMask Mobile</MyButton>*/}
       {/*  <br/>
@@ -160,25 +201,23 @@ class Balance extends React.Component {
                   <TableCell align="center">xSushi Staked</TableCell>
                   <TableCell align="center">xSushi Rewards</TableCell>
                   <TableCell align="center">Amount To be Harvested</TableCell>
-                  <TableCell align="center">Sushi Pool (Staked)</TableCell>
+                  <TableCell align="center">Sushi Pool (Staked)*</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-              {this.state.coinArr.map((row,index) => (
-                  <TableRow key={index}>
-                    <TableCell align="center" component="th" scope="row"> {row.name} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.mySushi} {row.logo} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> ${row.priceUSD}</TableCell>
-                    <TableCell align="center" component="th" scope="row"> ${row.myUSD} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> ${row.priceETHUSD} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> ${row.priceTotal}</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.walletBalance} {row.logo} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.xsushiStaked} {row.logo}</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.xsushiToBeCollected} {row.logo}</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.poolTokensPending} {row.logo} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.sushiLPStaked} SLP = {row.sushiInSushiPoolETH} {row.logo} & {row.ethInSushiPoolETH} ETH</TableCell>
+              <TableBody>             
+                  <TableRow key={1}>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.name} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.mySushi} {this.state.coinArr.logo} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceUSD}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.myUSD} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceETHUSD} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceTotal}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.walletBalance} {this.state.coinArr.logo} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiStaked} {this.state.coinArr.logo}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiToBeCollected} {this.state.coinArr.logo}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.poolTokensPending} {this.state.coinArr.logo} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.sushiInSushiPoolETH} {this.state.coinArr.logo}</TableCell>
                   </TableRow>
-                  ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -186,25 +225,24 @@ class Balance extends React.Component {
 
           <div class="item-xsushi">
           <br/>
-          xSushi Calcs
+          xSushi Info
           <br/>
-          <TableContainer>
+          <br/>
+          <TableContainer component={Paper}>
             <Table aria-label="simple table" size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Total LP Tokens Not Staked</TableCell>
-                  <TableCell align="center">Total LP tokens Staked</TableCell>
-                  <TableCell align="center">Total ETH Value Staked in all Pools</TableCell>
+                  <TableCell align="center">Sushi In Bar</TableCell>
+                  <TableCell align="center">Total xSushi supply</TableCell>
+                  <TableCell align="center">Sushi/xSushi Ratio</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-              {this.state.coinArr.map((row,index) => (
-                  <TableRow key={index}>
-                    <TableCell align="center" component="th" scope="row"> {row.poolTokensNotStaked} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} LP</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.poolTokensTotal} ETH </TableCell>
+                  <TableRow key={1}>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.sushiInBar} {this.state.coinArr.logo} = {this.state.coinArr.barSushiUSD}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiTotal}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiValInSushi} {this.state.coinArr.logo}</TableCell>
                   </TableRow>
-                  ))}
               </TableBody>
             </Table>
           </TableContainer>
@@ -213,9 +251,10 @@ class Balance extends React.Component {
 
           <div class="item-pool">
           <br/>
-          Pool / LP info:
+          Your Pool / LP info:
           <br/>
-          <TableContainer>
+          <br/>
+          <TableContainer component={Paper}>
             <Table aria-label="simple table" size="small">
               <TableHead>
                 <TableRow>
@@ -225,40 +264,27 @@ class Balance extends React.Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {this.state.coinArr.map((row,index) => (
-                  <TableRow key={index}>
-                    <TableCell align="center" component="th" scope="row"> {row.poolTokensNotStaked} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} LP</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.poolTokensTotal} ETH </TableCell>
+                  <TableRow key={1}>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.poolTokensNotStaked} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.poolTokensStaked} LP</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.poolTokensTotal} ETH </TableCell>
+                    {/*<TableCell align="center" component="th" scope="row"> {this.state.coinArr.sushiLPStaked} SLP = {this.state.coinArr.sushiInSushiPoolETH} {this.state.coinArr.logo} & {this.state.coinArr.ethInSushiPoolETH} ETH</TableCell>*/}
                   </TableRow>
-                  ))}
               </TableBody>
             </Table>
           </TableContainer>
           </div>
           <div class="item-info">
-          <b>How To:</b><br/><br/>
-          Buy Sushi <a target="_blank" href="https://exchange.sushiswapclassic.org/">https://exchange.sushiswapclassic.org/</a> (shows up in wallet balance)<br/>
-          Two options:<br/>
-          &nbsp;&nbsp;1.Stake to get staking rewards in desired pool<br/> 
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- get LP tokens: <a target="_blank" href="https://help.sushidocs.com/products/sushiswap-pools">https://help.sushidocs.com/products/sushiswap-pools</a> (will show in LP's unstaked)<br/>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Stake/Farm: <a target="_blank" href="https://sushiswapclassic.org/farms">https://sushiswapclassic.org/farms</a> (only Sushi Pool supported on this UI at the moment, Amount to be Harvested shows rewards)<br/>
-          &nbsp;&nbsp;2. Add to Sushi Bar to get 0.5 of all trading fees in xsushi  <a target="_blank" href="https://sushiswapclassic.org/staking">https://sushiswapclassic.org/staking</a><br/>
-          <br/>
-          Voting: Sushi LP tokens can be used for voting (SUSHIPOWAH) if you have them by a certain block when a snapshot is taken, more info: <a target="_blank" href="https://help.sushidocs.com/faqs/governance">https://help.sushidocs.com/faqs/governance</a><br/>
-          <br/>
-          Questions/help refer to: <a target="_blank" href="https://help.sushidocs.com/">https://help.sushidocs.com</a> (will show in Lp's unstaked)<br/>
-          
-
           <br/>
           <br/>
           <br/>
           <br/>
+          <b>Questions/help refer to:</b> <a target="_blank" href="https://help.sushidocs.com/">https://help.sushidocs.com</a> (will show in Lp's unstaked)<br/>
           In <b>beta</b>, still verifying calcs.
           <br/>
           Source: <a target="_blank" href="https://github.com/cryptogluon/sushi-balance">https://github.com/cryptogluon/sushi-balance</a>
           <br/>
-          Props to JS lib for most of the web3 hooks: <a target="_blank" href="https://github.com/bartjman/SushiSwapJs">https://github.com/bartjman/SushiSwapJs</a>
+          Props to barjman for most of the web3 hooks: <a target="_blank" href="https://github.com/bartjman/SushiSwapJs">https://github.com/bartjman/SushiSwapJs</a>
           <br/>
           Twitter: <a target="_blank" href="https://twitter.com/cryptogluon">https://twitter.com/cryptogluon</a>
           <br/>
