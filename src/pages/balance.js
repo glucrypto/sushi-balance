@@ -11,6 +11,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
 import detectEthereumProvider from '@metamask/detect-provider'
 import {SushiSwap} from '../lib/SushiSwapJs/sushiswap.js'
@@ -32,6 +35,13 @@ const MyButton = styled(Button)({
   }
 });
 
+const MyCard = styled(Card)({
+  width:'20em',
+  height:'6em',
+});
+
+
+
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
@@ -50,12 +60,12 @@ class Balance extends React.Component {
       coinArr:{
         name:'sushi',
         logo: '',
-        mySushi:0,
-        myUSD:0,
+        totalSushiBalance:0,
+        mySushiUSD:0,
         walletBalance:0,
         priceUSD:0,
         priceETHUSD:0,
-        priceTotal:0,
+        totalUSD:0,
         poolTokensNotStaked:0,
         poolTokensStaked:0,
         sushiLPStaked:0,
@@ -127,9 +137,9 @@ class Balance extends React.Component {
       })
 
     }
-    let mySushi = (parseFloat(Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether')) + (parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))) + sushiInSushiPoolETH  + poolTokensTotalPending).toFixed(4);
+    let totalSushiBalance = (parseFloat(Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether')) + (parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))) + sushiInSushiPoolETH  + poolTokensTotalPending).toFixed(4);
     let priceUSD = parseFloat(Web3.utils.fromWei(ss.base.sushiValueInCurrency.toString(),'ether'))*1000000000000;
-    let mySushiUSD = parseFloat(mySushi * priceUSD);
+    let mySushiUSD = parseFloat(totalSushiBalance * priceUSD);
     let myETHUSD = parseFloat(ethInSushiPoolETH) * parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000;
     //console.log(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))
     let totalUSD = parseFloat(myETHUSD) + parseFloat(mySushiUSD);
@@ -140,12 +150,12 @@ class Balance extends React.Component {
     coinArr = {
       name:'sushi',
       logo: ss.pools[ss.sushi_pool].logo,
-      mySushi:mySushi,
-      myUSD:formatter.format(mySushiUSD),
+      totalSushiBalance:totalSushiBalance,
+      mySushiUSD:formatter.format(mySushiUSD),
       walletBalance:Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether'),
       priceUSD:formatter.format(priceUSD),
       priceETHUSD:formatter.format(myETHUSD),
-      priceTotal:formatter.format(totalUSD),
+      totalUSD:formatter.format(totalUSD),
       poolTokensNotStaked:poolTokensNotStaked,
       poolTokensStaked:poolTokensStaked.toFixed(4),
       sushiLPStaked:sushiLPStaked.toFixed(4),
@@ -210,6 +220,18 @@ class Balance extends React.Component {
         <br/>
         <div class="main-grid">
           <div class="item-top">
+          <MyCard>
+          <CardContent>
+          <Typography component="h4" variant="h5">
+            Total USD:
+          </Typography>
+          <Typography component="h6" variant="h6">
+            {this.state.coinArr.totalUSD} ({this.state.coinArr.priceUSD})
+            </Typography>
+            </CardContent>
+          </MyCard>
+          </div>
+          <div class="item-info">
           <TableContainer component={Paper}>
             <Table aria-label="simple table" size="small">
               <TableHead>
@@ -230,11 +252,11 @@ class Balance extends React.Component {
               <TableBody>             
                   <TableRow key={1}>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.name} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.mySushi} {this.state.coinArr.logo} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.totalSushiBalance} {this.state.coinArr.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceUSD}</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.myUSD} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.mySushiUSD} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceETHUSD} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceTotal}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.totalUSD}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.walletBalance} {this.state.coinArr.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiStaked} {this.state.coinArr.logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiToBeCollected} {this.state.coinArr.logo}</TableCell>
@@ -247,9 +269,9 @@ class Balance extends React.Component {
           </div>
 
           <div class="item-xsushi">
-          <br/>
-          xSushi Info
-          <br/>
+          <Typography component="h5" variant="h5">
+            xSushi Info
+          </Typography>
           <br/>
           <TableContainer component={Paper}>
             <Table aria-label="simple table" size="small">
@@ -273,9 +295,9 @@ class Balance extends React.Component {
           </div>
 
           <div class="item-pool">
-          <br/>
-          Your Pool / LP info:
-          <br/>
+          <Typography component="h5" variant="h5">
+            Your Pool / LP info:
+          </Typography>
           <br/>
           <TableContainer component={Paper}>
             <Table aria-label="simple table" size="small">
@@ -296,6 +318,14 @@ class Balance extends React.Component {
               </TableBody>
             </Table>
           </TableContainer>
+          </div>
+          <div class="item-chart">
+          <Typography component="h5" variant="h5">
+            Charts
+          </Typography>
+          <br/>
+          tonight?
+          
           </div>
           </div>
            
