@@ -300,6 +300,7 @@ class Balance extends React.Component {
               About
               </Typography>
               &nbsp; This page is an unofficial dashboard made by <a target="_blank" href="https://www.twitter.com/cryptogluon">@cryptogluon</a><br/>
+              &nbsp; All FE code you can verify on <a target="_blank" href="https://github.com/cryptogluon/sushi-balance">https://github.com/cryptogluon/sushi-balance</a><br/>
               &nbsp; Values and assumptions are being actively verified.<br/>
               &nbsp; TVL Rewards and xsushi assumptions are still being verified.<br/>
               &nbsp; Coming Soon: ROI / All Pools / Some Charts<br/>
