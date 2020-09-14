@@ -144,7 +144,7 @@ class Balance extends React.Component {
         ethInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].userStakedToken1.toString(),'ether'));
         sushiLPStaked=parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
       }
-      //poolTokensTotalPending+=parseFloat(Web3.utils.fromWei(ss.pools[i].pending.toString(),'ether'))
+      poolTokensTotalPending+=parseFloat(Web3.utils.fromWei(ss.pools[i].pending.toString(),'ether'))
       totalPoolTokensNotStaked = parseFloat(Web3.utils.fromWei(ss.pools[i].uniBalance.toString(),'ether')).toFixed(6)
       totalPoolTokensStaked = parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether')).toFixed(6)
   
