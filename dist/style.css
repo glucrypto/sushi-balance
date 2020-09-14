@@ -78,5 +78,11 @@ body:after{
 }
 
 .item-chart{
-	
+	grid-row:4;
+	grid-column:1;
+}
+
+.item-logs{
+	grid-row:5;
+	grid-column:1;
 }

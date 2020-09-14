@@ -14,14 +14,18 @@ import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-
-import detectEthereumProvider from '@metamask/detect-provider'
-import {SushiSwap} from '../lib/SushiSwapJs/sushiswap.js'
-
 import {Navbar,Nav} from 'react-bootstrap';
 import IconButton from '@material-ui/core/IconButton';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import TwitterIcon from '@material-ui/icons/Twitter';
+
+//Eth stuff
+import detectEthereumProvider from '@metamask/detect-provider'
+import {SushiSwap} from '../lib/SushiSwapJs/sushiswap.js'
+
+//charts
+import {Line} from 'react-chartjs-2';
+
 
 const Web3 = require("web3");
 
@@ -51,7 +55,9 @@ const formatter = new Intl.NumberFormat('en-US', {
 const sushiFormatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 2
-})
+});
+
+
 
 class Balance extends React.Component {
   constructor(props){
@@ -223,10 +229,10 @@ class Balance extends React.Component {
           <MyCard>
           <CardContent>
           <Typography component="h4" variant="h5">
-            Total USD:
+            Total:
           </Typography>
           <Typography component="h6" variant="h6">
-            {this.state.coinArr.totalUSD} ({this.state.coinArr.priceUSD})
+            {this.state.coinArr.totalUSD} (@ {this.state.coinArr.priceUSD}/{this.state.coinArr.logo})
             </Typography>
             </CardContent>
           </MyCard>
@@ -236,12 +242,10 @@ class Balance extends React.Component {
             <Table aria-label="simple table" size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Asset</TableCell>
-                  <TableCell align="center">My Sushi</TableCell>
+                  <TableCell align="center">Total Sushi</TableCell>
                   <TableCell align="center">Price</TableCell>
                   <TableCell align="center">Sushi USD Value</TableCell>
                   <TableCell align="center">ETH USD Value</TableCell>
-                  <TableCell align="center">Total USD Value</TableCell>
                   <TableCell align="center">Wallet Balance</TableCell>
                   <TableCell align="center">xSushi Staked</TableCell>
                   <TableCell align="center">xSushi Rewards</TableCell>
@@ -251,12 +255,10 @@ class Balance extends React.Component {
               </TableHead>
               <TableBody>             
                   <TableRow key={1}>
-                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.name} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.totalSushiBalance} {this.state.coinArr.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceUSD}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.mySushiUSD} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceETHUSD} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.totalUSD}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.walletBalance} {this.state.coinArr.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiStaked} {this.state.coinArr.logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiToBeCollected} {this.state.coinArr.logo}</TableCell>
@@ -320,12 +322,18 @@ class Balance extends React.Component {
           </TableContainer>
           </div>
           <div class="item-chart">
-          <Typography component="h5" variant="h5">
+          {/*<Typography component="h5" variant="h5">
             Charts
-          </Typography>
+          </Typography>*/}
           <br/>
-          tonight?
+          {/*<Line data={data} />*/}
           
+          </div>
+          <div class="item-logs">
+         {/* <Typography component="h5" variant="h5">
+            Logs
+          </Typography>*/}
+          <br/>
           </div>
           </div>
            
