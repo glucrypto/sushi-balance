@@ -145,7 +145,7 @@ class Balance extends React.Component {
       
       // Pools
       let pool = ss.pools[i];
-      console.log(pool)
+      //console.log(pool)
       let shareOfUniswapPool = parseFloat(Web3.utils.fromWei(pool.shareOfUniswapPool.toString(),'ether'));
       let totalSupply = parseFloat(Web3.utils.fromWei(pool.totalSupply.toString(),'ether'));
       let totalStakedToken0 = parseFloat(Web3.utils.fromWei(pool.totalStakedToken0.toString(),'ether'))
