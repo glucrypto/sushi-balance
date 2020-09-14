@@ -304,6 +304,7 @@ class Balance extends React.Component {
               &nbsp; Values and assumptions are being actively verified.<br/>
               &nbsp; TVL Rewards and xsushi assumptions are still being verified.<br/>
               &nbsp; Coming Soon: ROI / All Pools / Some Charts<br/>
+              &nbsp; Interact w/ Sushi: <a target="_blank" href="https://sushiswapclassic.org/">https://sushiswapclassic.org/</a>
               </CardContent>
               </Card>
             </Popover>
