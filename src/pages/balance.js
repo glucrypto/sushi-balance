@@ -97,6 +97,7 @@ class Balance extends React.Component {
     this.SushiSwapEventEmitter = this.SushiSwapEventEmitter.bind(this);
     this.connectToMetaMask = this.connectToMetaMask.bind(this);
     this.openAbout = this.openAbout.bind(this);
+    this.compare = this.compare.bind(this);
   }
   async buildSushiSwap(web3){
     let ss = new SushiSwap(web3)
@@ -129,6 +130,10 @@ class Balance extends React.Component {
     let ethInSushiPoolETH=0;
     let poolTokensNotStaked=0;
     let poolTokensStaked=0;
+    let totalPoolTokensNotStaked=0;
+    let totalPoolTokensStaked=0;
+
+
     let sushiLPStaked=0;
     let farms = [];
     let tvlInRewardPools=0;
@@ -139,9 +144,21 @@ class Balance extends React.Component {
         ethInSushiPoolETH=parseFloat(Web3.utils.fromWei(ss.pools[i].userStakedToken1.toString(),'ether'));
         sushiLPStaked=parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
       }
-      poolTokensTotalPending+=parseFloat(Web3.utils.fromWei(ss.pools[i].pending.toString(),'ether'))
-      poolTokensNotStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].uniBalance.toString(),'ether'))
-      poolTokensStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
+      //poolTokensTotalPending+=parseFloat(Web3.utils.fromWei(ss.pools[i].pending.toString(),'ether'))
+      totalPoolTokensNotStaked = parseFloat(Web3.utils.fromWei(ss.pools[i].uniBalance.toString(),'ether')).toFixed(6)
+      totalPoolTokensStaked = parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether')).toFixed(6)
+  
+      poolTokensNotStaked = parseFloat(Web3.utils.fromWei(ss.pools[i].uniBalance.toString(),'ether'))
+      poolTokensStaked = parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
+
+      if(poolTokensStaked === 0 && poolTokensNotStaked === 0){
+        poolTokensStaked = ' -'
+        poolTokensNotStaked = '-';
+      }
+      else{
+        poolTokensStaked=parseFloat(poolTokensStaked).toFixed(6)
+        poolTokensNotStaked=parseFloat(poolTokensNotStaked).toFixed(6)
+      }
       
       // Pools
       let pool = ss.pools[i];
@@ -152,13 +169,23 @@ class Balance extends React.Component {
       let totalStakedToken1 = parseFloat(Web3.utils.fromWei(pool.totalStakedToken1.toString(),'ether'))
       let token0rate = parseFloat(Web3.utils.fromWei(pool.token0rate.toString(),'ether'))
       let token1rate = parseFloat(Web3.utils.fromWei(pool.token1rate.toString(),'ether'))
+      let userStakedTokensInPool=parseFloat(Web3.utils.fromWei(pool.balance.toString(),'ether'))
       //let vst0=parseFloat(Web3.utils.fromWei(pool.valueStakedToken0.toString(),'ether'))
       //let vst1=parseFloat(Web3.utils.fromWei(pool.valueStakedToken1.toString(),'ether'))
       //let totalVST=(vst0+vst1);
       let totalTokensInPool0=parseFloat(Web3.utils.fromWei(pool.reserve0.toString(),'ether'))/token0rate*parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000;;
       let totalTokensInPool1=parseFloat(Web3.utils.fromWei(pool.reserve1.toString(),'ether'))/token1rate*parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000;
       let totalTokensInPool=totalTokensInPool0+totalTokensInPool1;
+      let uniTotalSupply=parseFloat(Web3.utils.fromWei(pool.uniTotalSupply.toString(),'ether'));
+
+      let userPercentStaked=(poolTokensStaked/uniTotalSupply)*100;
+      let userStaked=(poolTokensStaked/uniTotalSupply);
+      let userPercentStakedRewardsPerBlock = ' - ';
+      if(userStaked*parseFloat(Web3.utils.fromWei(ss.pools[i].totalSushiPerBlock.toString()),'ether')){
+        userPercentStakedRewardsPerBlock=(userStaked*parseFloat(Web3.utils.fromWei(ss.pools[i].totalSushiPerBlock.toString()),'ether')).toFixed(10)
+      }
       tvlInRewardPools+=totalTokensInPool;
+
       farms.push({
         name:pool.name,
         logo:pool.logo,
@@ -166,10 +193,10 @@ class Balance extends React.Component {
         devShareReward:parseFloat(Web3.utils.fromWei(pool.devShare.toString(),'ether')),
         totalSushiPerBlock:parseFloat(Web3.utils.fromWei(pool.totalSushiPerBlock.toString(),'ether')).toFixed(4),
         totalSLPStaked:parseFloat(Web3.utils.fromWei(pool.shareOfUniswapPool.toString(),'ether')*100).toFixed(2),
-        hourlyROI:parseFloat(Web3.utils.fromWei(pool.hourlyInCurrency.toString(),'ether')),
-        dailyROI:parseFloat(Web3.utils.fromWei(pool.dailyInCurrency.toString(),'ether')),
-        monthlyROI:parseFloat(Web3.utils.fromWei(pool.monthlyInCurrency.toString(),'ether')),
-        yearlyROI:parseFloat(Web3.utils.fromWei(pool.yearlyInCurrency.toString(),'ether')),
+        hourlyROI:(parseFloat(Web3.utils.fromWei(pool.hourlyROI.toString(),'ether'))*100000000000000).toFixed(2) + " %",
+        dailyROI:(parseFloat(Web3.utils.fromWei(pool.dailyROI.toString(),'ether'))*100000000000000).toFixed(2) + " %",
+        monthlyROI:(parseFloat(Web3.utils.fromWei(pool.monthlyROI.toString(),'ether'))*100000000000000).toFixed(2) + " %",
+        yearlyROI:(parseFloat(Web3.utils.fromWei(pool.yearlyROI.toString(),'ether'))*100000000000000).toFixed(2) + " %",
         TVL:formatter.format(parseFloat(Web3.utils.fromWei(pool.valueInCurrency.toString(),'ether'))*1000000000000),
         //valueStakedToken0:vst0 +'ETH',
         //valueStakedToken1:vst1 +'ETH',
@@ -182,10 +209,16 @@ class Balance extends React.Component {
         totalTokensInPool1:formatter.format(totalTokensInPool1) + 'ETH',
         totalTokensInPool:formatter.format(totalTokensInPool),
         reserve0:sushiFormatter.format(parseFloat(Web3.utils.fromWei(pool.reserve0.toString(),'ether'))),
-        reserve1:sushiFormatter.format(parseFloat(Web3.utils.fromWei(pool.reserve1.toString(),'ether'))) + "ETH",
+        reserve1:sushiFormatter.format(parseFloat(Web3.utils.fromWei(pool.reserve1.toString(),'ether'))) + " ETH",
         shareOfUniswapPool:shareOfUniswapPool,
         totalSupply:totalSupply,
-        uniTotalSupply:parseFloat(Web3.utils.fromWei(pool.uniTotalSupply.toString(),'ether'))
+        uniTotalSupply:sushiFormatter.format(uniTotalSupply) + " SLP",
+        userStakedTokensInPool:userStakedTokensInPool,
+        userPercentStaked:userPercentStaked + " %",
+        userPercentStakedRewardsPerBlock:userPercentStakedRewardsPerBlock,
+        poolTokensNotStaked:poolTokensNotStaked,
+        poolTokensStaked:poolTokensStaked
+
 
       })
       //console.log(poolTokensTotalPending)
@@ -196,6 +229,9 @@ class Balance extends React.Component {
       })
 
     }
+
+    farms.sort(this.compare);      
+
     let totalSushiBalance = (parseFloat(Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether')) + (parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))) + sushiInSushiPoolETH  + poolTokensTotalPending).toFixed(4);
     let priceUSD = parseFloat(Web3.utils.fromWei(ss.base.sushiValueInCurrency.toString(),'ether'))*1000000000000;
     let mySushiUSD = parseFloat(totalSushiBalance * priceUSD);
@@ -216,8 +252,8 @@ class Balance extends React.Component {
       priceUSD:formatter.format(priceUSD),
       priceETHUSD:formatter.format(myETHUSD),
       totalUSD:formatter.format(totalUSD),
-      poolTokensNotStaked:poolTokensNotStaked,
-      poolTokensStaked:poolTokensStaked.toFixed(4),
+      totalPoolTokensNotStaked:totalPoolTokensNotStaked,
+      totalPoolTokensStaked:totalPoolTokensStaked,
       sushiLPStaked:sushiLPStaked.toFixed(4),
       poolTokensTotal:poolTokensTotal.toFixed(4),
       poolTokensPending:poolTokensTotalPending.toFixed(4),
@@ -260,6 +296,17 @@ class Balance extends React.Component {
       anchorEl:this.state.openAbout ? '' : event.currentTarget
     })
   }
+
+   compare(a,b){
+    if(parseFloat(a.totalSushiPerBlock) > parseFloat(b.totalSushiPerBlock)){
+      return -1
+    }
+    else if(parseFloat(a.totalSushiPerBlock) == parseFloat(b.totalSushiPerBlock)){
+      return -1
+    }
+    else
+      return 1
+    }
   
   render() {
     return (
@@ -402,7 +449,7 @@ class Balance extends React.Component {
 
           <div class="item-pool">
           <Typography component="h5" variant="h5">
-            Your Pool / LP info:
+            My Pool info:
           </Typography>
           <br/>
           <TableContainer component={Paper}>
@@ -416,8 +463,8 @@ class Balance extends React.Component {
               </TableHead>
               <TableBody>
                   <TableRow key={1}>
-                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.poolTokensNotStaked} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.poolTokensStaked} LP</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.totalPoolTokensNotStaked} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.totalPoolTokensStaked} LP</TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.poolTokensTotal} ETH </TableCell>
                     {/*<TableCell align="center" component="th" scope="row"> {this.state.coinArr.sushiLPStaked} SLP = {this.state.coinArr.sushiInSushiPoolETH} {this.state.coinArr.logo} & {this.state.coinArr.ethInSushiPoolETH} ETH</TableCell>*/}
                   </TableRow>
@@ -437,8 +484,10 @@ class Balance extends React.Component {
                   <TableCell align="center">Farm</TableCell>
                   <TableCell align="center">Reward/Block</TableCell>
                   <TableCell align="center">Tokens in Pool</TableCell>
-                  <TableCell align="center">% Staked</TableCell>
+                  <TableCell align="center">Total SLPs Staked (% of Total in Pool)</TableCell>
                   <TableCell align="center">Total Value Locked</TableCell>
+                  <TableCell align="center">My SLP Staked | Unstaked</TableCell>
+                  <TableCell align="center">My Reward/Block</TableCell>
                   <TableCell align="center">ROI</TableCell>
                 </TableRow>
               </TableHead>
@@ -448,11 +497,11 @@ class Balance extends React.Component {
                     <TableCell align="center" component="th" scope="row"> {row.name} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.totalSushiPerBlock} {this.state.coinArr.logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.reserve0}{row.logo}<br/> {row.reserve1}</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.totalSLPStaked} %</TableCell>
-                    
-                    
+                    <TableCell align="center" component="th" scope="row"> {row.uniTotalSupply} ({row.totalSLPStaked} %)</TableCell>
                     <TableCell align="center" component="th" scope="row">{row.totalTokensInPool} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} | {row.poolTokensNotStaked}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.userPercentStakedRewardsPerBlock} {this.state.coinArr.logo}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> Hourly: {row.hourlyROI}<br/>Daily: {row.dailyROI}<br/> Yearly: {row.yearlyROI}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
