@@ -178,8 +178,8 @@ class Balance extends React.Component {
       let totalTokensInPool=totalTokensInPool0+totalTokensInPool1;
       let uniTotalSupply=parseFloat(Web3.utils.fromWei(pool.uniTotalSupply.toString(),'ether'));
 
-      let userPercentStaked=(poolTokensStaked/uniTotalSupply)*100;
-      let userStaked=(poolTokensStaked/uniTotalSupply);
+      let userPercentStaked=(totalSupply*poolTokensStaked/uniTotalSupply)*100;
+      let userStaked=(totalSupply*poolTokensStaked/uniTotalSupply);
       let userPercentStakedRewardsPerBlock = ' - ';
       if(userStaked*parseFloat(Web3.utils.fromWei(ss.pools[i].totalSushiPerBlock.toString()),'ether')){
         userPercentStakedRewardsPerBlock=(userStaked*parseFloat(Web3.utils.fromWei(ss.pools[i].totalSushiPerBlock.toString()),'ether')).toFixed(10)
@@ -487,7 +487,6 @@ class Balance extends React.Component {
                   <TableCell align="center">Total SLPs Staked (% of Total in Pool)</TableCell>
                   <TableCell align="center">Total Value Locked</TableCell>
                   <TableCell align="center">My SLP Staked | Unstaked</TableCell>
-                  <TableCell align="center">My Reward/Block</TableCell>
                   <TableCell align="center">ROI</TableCell>
                 </TableRow>
               </TableHead>
@@ -500,7 +499,6 @@ class Balance extends React.Component {
                     <TableCell align="center" component="th" scope="row"> {row.uniTotalSupply} ({row.totalSLPStaked} %)</TableCell>
                     <TableCell align="center" component="th" scope="row">{row.totalTokensInPool} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} | {row.poolTokensNotStaked}</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.userPercentStakedRewardsPerBlock} {this.state.coinArr.logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> Hourly: {row.hourlyROI}<br/>Daily: {row.dailyROI}<br/> Yearly: {row.yearlyROI}</TableCell>
                   </TableRow>
                 ))}
