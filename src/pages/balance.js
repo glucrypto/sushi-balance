@@ -18,6 +18,8 @@ import {Navbar,Nav} from 'react-bootstrap';
 import IconButton from '@material-ui/core/IconButton';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import TwitterIcon from '@material-ui/icons/Twitter';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import Popover from '@material-ui/core/Popover';
 
 //Eth stuff
 import detectEthereumProvider from '@metamask/detect-provider'
@@ -64,6 +66,8 @@ class Balance extends React.Component {
   	super(props);
     this.state = {
       farms:[],
+      openAbout:false,
+      anchorEl:'',
       coinArr:{
         name:'sushi',
         logo: '',
@@ -92,6 +96,7 @@ class Balance extends React.Component {
     this.buildSushiSwap = this.buildSushiSwap.bind(this);
     this.SushiSwapEventEmitter = this.SushiSwapEventEmitter.bind(this);
     this.connectToMetaMask = this.connectToMetaMask.bind(this);
+    this.openAbout = this.openAbout.bind(this);
   }
   async buildSushiSwap(web3){
     let ss = new SushiSwap(web3)
@@ -248,6 +253,13 @@ class Balance extends React.Component {
       this.SushiSwapEventEmitter(web3);
     }
   }
+
+  openAbout(event){
+    this.setState({
+      openAbout:!this.state.openAbout,
+      anchorEl:this.state.openAbout ? '' : event.currentTarget
+    })
+  }
   
   render() {
     return (
@@ -266,6 +278,34 @@ class Balance extends React.Component {
             <IconButton target="_blank" href="https://github.com/cryptogluon/sushi-balance">
             <GitHubIcon/>
             </IconButton>
+            <IconButton target="_blank" onClick={(event) => this.openAbout(event)}>
+            <InfoOutlinedIcon/>
+            </IconButton>
+            <Popover
+              anchorEl={this.state.anchorEl}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={this.state.openAbout}
+              onClose={() =>this.openAbout()}
+            >
+              <Card>
+              <CardContent>
+              <Typography component="h4" variant="h5">
+              About
+              </Typography>
+              &nbsp; This page is an unofficial dashboard made by <a target="_blank" href="https://www.twitter.com/cryptogluon">@cryptogluon</a><br/>
+              &nbsp; Values and assumptions are being actively verified.<br/>
+              &nbsp; TVL Rewards and xsushi assumptions are still being verified.<br/>
+              &nbsp; Coming Soon: ROI / All Pools / Some Charts<br/>
+              </CardContent>
+              </Card>
+            </Popover>
           </div>
         </Navbar.Collapse>
       </Navbar>
