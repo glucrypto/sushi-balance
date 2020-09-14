@@ -63,6 +63,7 @@ class Balance extends React.Component {
   constructor(props){
   	super(props);
     this.state = {
+      farms:[],
       coinArr:{
         name:'sushi',
         logo: '',
@@ -124,7 +125,8 @@ class Balance extends React.Component {
     let poolTokensNotStaked=0;
     let poolTokensStaked=0;
     let sushiLPStaked=0;
-
+    let farms = [];
+    let tvlInRewardPools=0;
     for(let i=0;i<ss.pools.length;i++){
       poolTokensTotal+=parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken0.toString(),'ether')) + parseFloat(Web3.utils.fromWei(ss.pools[i].valueUserStakedToken1.toString(),'ether'))
       if(i === ss.sushi_pool){
@@ -136,10 +138,56 @@ class Balance extends React.Component {
       poolTokensNotStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].uniBalance.toString(),'ether'))
       poolTokensStaked += parseFloat(Web3.utils.fromWei(ss.pools[i].balance.toString(),'ether'))
       
+      // Pools
+      let pool = ss.pools[i];
+      console.log(pool)
+      let shareOfUniswapPool = parseFloat(Web3.utils.fromWei(pool.shareOfUniswapPool.toString(),'ether'));
+      let totalSupply = parseFloat(Web3.utils.fromWei(pool.totalSupply.toString(),'ether'));
+      let totalStakedToken0 = parseFloat(Web3.utils.fromWei(pool.totalStakedToken0.toString(),'ether'))
+      let totalStakedToken1 = parseFloat(Web3.utils.fromWei(pool.totalStakedToken1.toString(),'ether'))
+      let token0rate = parseFloat(Web3.utils.fromWei(pool.token0rate.toString(),'ether'))
+      let token1rate = parseFloat(Web3.utils.fromWei(pool.token1rate.toString(),'ether'))
+      //let vst0=parseFloat(Web3.utils.fromWei(pool.valueStakedToken0.toString(),'ether'))
+      //let vst1=parseFloat(Web3.utils.fromWei(pool.valueStakedToken1.toString(),'ether'))
+      //let totalVST=(vst0+vst1);
+      let totalTokensInPool0=parseFloat(Web3.utils.fromWei(pool.reserve0.toString(),'ether'))/token0rate*parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000;;
+      let totalTokensInPool1=parseFloat(Web3.utils.fromWei(pool.reserve1.toString(),'ether'))/token1rate*parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000;
+      let totalTokensInPool=totalTokensInPool0+totalTokensInPool1;
+      tvlInRewardPools+=totalTokensInPool;
+      farms.push({
+        name:pool.name,
+        logo:pool.logo,
+        sushiReward:parseFloat(Web3.utils.fromWei(pool.sushiReward.toString(),'ether')),
+        devShareReward:parseFloat(Web3.utils.fromWei(pool.devShare.toString(),'ether')),
+        totalSushiPerBlock:parseFloat(Web3.utils.fromWei(pool.totalSushiPerBlock.toString(),'ether')).toFixed(4),
+        totalSLPStaked:parseFloat(Web3.utils.fromWei(pool.shareOfUniswapPool.toString(),'ether')*100).toFixed(2),
+        hourlyROI:parseFloat(Web3.utils.fromWei(pool.hourlyInCurrency.toString(),'ether')),
+        dailyROI:parseFloat(Web3.utils.fromWei(pool.dailyInCurrency.toString(),'ether')),
+        monthlyROI:parseFloat(Web3.utils.fromWei(pool.monthlyInCurrency.toString(),'ether')),
+        yearlyROI:parseFloat(Web3.utils.fromWei(pool.yearlyInCurrency.toString(),'ether')),
+        TVL:formatter.format(parseFloat(Web3.utils.fromWei(pool.valueInCurrency.toString(),'ether'))*1000000000000),
+        //valueStakedToken0:vst0 +'ETH',
+        //valueStakedToken1:vst1 +'ETH',
+        totalStakedToken0:totalStakedToken0,
+        totalStakedToken1:totalStakedToken1,
+        //totalVST:totalVST,
+        token0rate:token0rate,
+        token1rate:token1rate,
+        totalTokensInPool0:formatter.format(totalTokensInPool0) + 'ETH',
+        totalTokensInPool1:formatter.format(totalTokensInPool1) + 'ETH',
+        totalTokensInPool:formatter.format(totalTokensInPool),
+        reserve0:sushiFormatter.format(parseFloat(Web3.utils.fromWei(pool.reserve0.toString(),'ether'))),
+        reserve1:sushiFormatter.format(parseFloat(Web3.utils.fromWei(pool.reserve1.toString(),'ether'))) + "ETH",
+        shareOfUniswapPool:shareOfUniswapPool,
+        totalSupply:totalSupply,
+        uniTotalSupply:parseFloat(Web3.utils.fromWei(pool.uniTotalSupply.toString(),'ether'))
+
+      })
       //console.log(poolTokensTotalPending)
       poolTokens.push({
         poolName:ss.pools[i].name,
-        userBalanceLPs:ss.pools[i].balance
+        userBalanceLPs:ss.pools[i].balance,
+
       })
 
     }
@@ -156,6 +204,7 @@ class Balance extends React.Component {
     coinArr = {
       name:'sushi',
       logo: ss.pools[ss.sushi_pool].logo,
+      tvlInRewardPools:formatter.format(tvlInRewardPools),
       totalSushiBalance:totalSushiBalance,
       mySushiUSD:formatter.format(mySushiUSD),
       walletBalance:Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether'),
@@ -175,10 +224,11 @@ class Balance extends React.Component {
       sushiInBar:sushiFormatter.format(parseFloat(Web3.utils.fromWei(bar.barSushi.toString(),'ether'))),
       xsushiValInSushi:xsushiValInSushi,
       barSushiUSD:formatter.format(barSushiUSD),
-      address: ss.base.sushi,
+      address: ss.base.sushi
     }
     this.setState({
-      coinArr:coinArr
+      coinArr:coinArr,
+      farms:farms
     })
   }
 
@@ -225,14 +275,26 @@ class Balance extends React.Component {
         <br/>*/}
         <br/>
         <div class="main-grid">
-          <div class="item-top">
+          <div class="item-top-1">
           <MyCard>
           <CardContent>
           <Typography component="h4" variant="h5">
-            Total:
+            My Total:
           </Typography>
           <Typography component="h6" variant="h6">
             {this.state.coinArr.totalUSD} (@ {this.state.coinArr.priceUSD}/{this.state.coinArr.logo})
+            </Typography>
+            </CardContent>
+          </MyCard>
+          </div>
+          <div class="item-top-2">
+          <MyCard>
+          <CardContent>
+          <Typography component="h4" variant="h5">
+            TVL in Reward Pools:
+          </Typography>
+          <Typography component="h6" variant="h6">
+            {this.state.coinArr.tvlInRewardPools}
             </Typography>
             </CardContent>
           </MyCard>
@@ -242,7 +304,7 @@ class Balance extends React.Component {
             <Table aria-label="simple table" size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Total Sushi</TableCell>
+                  <TableCell align="center">My Sushi Balance</TableCell>
                   <TableCell align="center">Price</TableCell>
                   <TableCell align="center">Sushi USD Value</TableCell>
                   <TableCell align="center">ETH USD Value</TableCell>
@@ -305,9 +367,9 @@ class Balance extends React.Component {
             <Table aria-label="simple table" size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Total LP Tokens Not Staked</TableCell>
-                  <TableCell align="center">Total LP tokens Staked</TableCell>
-                  <TableCell align="center">Total ETH Value Staked in all Pools</TableCell>
+                  <TableCell align="center">Total SLP Not Staked</TableCell>
+                  <TableCell align="center">Total SLP Staked</TableCell>
+                  <TableCell align="center">Total Value Staked in Rewards Pools</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -317,6 +379,40 @@ class Balance extends React.Component {
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.poolTokensTotal} ETH </TableCell>
                     {/*<TableCell align="center" component="th" scope="row"> {this.state.coinArr.sushiLPStaked} SLP = {this.state.coinArr.sushiInSushiPoolETH} {this.state.coinArr.logo} & {this.state.coinArr.ethInSushiPoolETH} ETH</TableCell>*/}
                   </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+          </div>
+          <div class="item-pairs">
+          <Typography component="h5" variant="h5">
+            Pools with Rewards
+          </Typography>
+          <br/>
+          <TableContainer component={Paper}>
+            <Table aria-label="simple table" size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Farm</TableCell>
+                  <TableCell align="center">Reward/Block</TableCell>
+                  <TableCell align="center">Tokens in Pool</TableCell>
+                  <TableCell align="center">% Staked</TableCell>
+                  <TableCell align="center">Total Value Locked</TableCell>
+                  <TableCell align="center">ROI</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              {this.state.farms.map((row,index) => (             
+                  <TableRow key={index}>
+                    <TableCell align="center" component="th" scope="row"> {row.name} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.totalSushiPerBlock} {row.logo}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.reserve0}{row.logo}<br/> {row.reserve1}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.totalSLPStaked} %</TableCell>
+                    
+                    
+                    <TableCell align="center" component="th" scope="row">{row.totalTokensInPool} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
