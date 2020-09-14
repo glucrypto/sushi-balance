@@ -445,7 +445,7 @@ class Balance extends React.Component {
               {this.state.farms.map((row,index) => (             
                   <TableRow key={index}>
                     <TableCell align="center" component="th" scope="row"> {row.name} </TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.totalSushiPerBlock} {row.logo}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.totalSushiPerBlock} {this.state.coinArr.logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.reserve0}{row.logo}<br/> {row.reserve1}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.totalSLPStaked} %</TableCell>
                     
