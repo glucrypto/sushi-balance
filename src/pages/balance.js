@@ -75,6 +75,7 @@ class Balance extends React.Component {
         mySushiUSD:0,
         walletBalance:0,
         priceUSD:0,
+        priceETH:0,
         priceETHUSD:0,
         totalUSD:0,
         poolTokensNotStaked:0,
@@ -235,8 +236,10 @@ class Balance extends React.Component {
     let totalSushiBalance = (parseFloat(Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether')) + (parseFloat(Web3.utils.fromWei(bar.sushiStake.toString(),'ether'))) + sushiInSushiPoolETH  + poolTokensTotalPending).toFixed(4);
     let priceUSD = parseFloat(Web3.utils.fromWei(ss.base.sushiValueInCurrency.toString(),'ether'))*1000000000000;
     let mySushiUSD = parseFloat(totalSushiBalance * priceUSD);
-    let myETHUSD = parseFloat(ethInSushiPoolETH) * parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000;
+    let ETHPrice = parseFloat(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))*1000000000000;
+    let myETHUSD = parseFloat(ethInSushiPoolETH) * ETHPrice;
     //console.log(Web3.utils.fromWei(ss.base.eth_rate.toString(),'ether'))
+    let myETH = parseFloat(ethInSushiPoolETH) + parseFloat(mySushiUSD / ETHPrice);
     let totalUSD = parseFloat(myETHUSD) + parseFloat(mySushiUSD);
     let xsushiValInSushi = (parseFloat(Web3.utils.fromWei(bar.barSushi.toString(),'ether')) / parseFloat(Web3.utils.fromWei(bar.totalXSushi.toString(),'ether'))).toFixed(4)
     //let xsushiValInUSD = xsushiValInSushi(parseFloat(Web3.utils.fromWei(bar.barSushi.toString(),'ether'))).toFixed(4);
@@ -245,11 +248,13 @@ class Balance extends React.Component {
     coinArr = {
       name:'sushi',
       logo: ss.pools[ss.sushi_pool].logo,
+      eth_logo: 'Ξ',
       tvlInRewardPools:formatter.format(tvlInRewardPools),
       totalSushiBalance:totalSushiBalance,
       mySushiUSD:formatter.format(mySushiUSD),
       walletBalance:Web3.utils.fromWei(ss.base.sushiBalance.toString(),'ether'),
       priceUSD:formatter.format(priceUSD),
+      priceETH:myETH.toFixed(2),
       priceETHUSD:formatter.format(myETHUSD),
       totalUSD:formatter.format(totalUSD),
       totalPoolTokensNotStaked:totalPoolTokensNotStaked,
@@ -396,6 +401,7 @@ class Balance extends React.Component {
                   <TableCell align="center">My Sushi Balance</TableCell>
                   <TableCell align="center">Price</TableCell>
                   <TableCell align="center">Sushi USD Value</TableCell>
+                  <TableCell align="center">ETH Value</TableCell>
                   <TableCell align="center">ETH USD Value</TableCell>
                   <TableCell align="center">Wallet Balance</TableCell>
                   <TableCell align="center">xSushi Staked</TableCell>
@@ -409,6 +415,7 @@ class Balance extends React.Component {
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.totalSushiBalance} {this.state.coinArr.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceUSD}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.mySushiUSD} </TableCell>
+                    <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceETH} {this.state.coinArr.eth_logo}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.priceETHUSD} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.walletBalance} {this.state.coinArr.logo} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {this.state.coinArr.xsushiStaked} {this.state.coinArr.logo}</TableCell>
