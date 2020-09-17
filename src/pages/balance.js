@@ -110,16 +110,16 @@ class Balance extends React.Component {
     //console.log(bar);//parseFloat(Web3.utils.fromWei(ss.pools[12].totalSushiPerBlock.toString()),'ether'),parseFloat(Web3.utils.fromWei(ss.pools[12].devShare.toString()),'ether'))
     // DEBUGGING
     this.setState({
-      baseSushiPerBlock:parseFloat(Web3.utils.fromWei(ss.base.sushiPerBlock.toString()),'ether'),
-      sushiReward:parseFloat(Web3.utils.fromWei(ss.pools[12].sushiReward.toString()),'ether'),
-      devShare:parseFloat(Web3.utils.fromWei(ss.pools[12].devShare.toString()),'ether'),
-      sushiRewardInETH:parseFloat(Web3.utils.fromWei(ss.pools[12].sushiRewardInETH.toString()),'ether'),
-      sushiRewardInCurrency:parseFloat(Web3.utils.fromWei(ss.pools[12].sushiRewardInCurrency.toString())*1000000000000,'ether'),
-      totalSushiPerBlock:parseFloat(Web3.utils.fromWei(ss.pools[12].totalSushiPerBlock.toString()),'ether'),
-      hourlyROI:parseFloat(Web3.utils.fromWei(ss.pools[12].hourlyROI.toString()),'ether'),
-      dailyROI:parseFloat(Web3.utils.fromWei(ss.pools[12].dailyROI.toString()),'ether'),
-      hourlyInCurrency:parseFloat(Web3.utils.fromWei(ss.pools[12].hourlyInCurrency.toString()),'ether'),
-      dailyInCurrency:parseFloat(Web3.utils.fromWei(ss.pools[12].dailyInCurrency.toString())*1000000000000,'ether'),
+      baseSushiPerBlock:this.toETH(ss.base.sushiPerBlock),
+      sushiReward:this.toETH(ss.pools[12].sushiReward),
+      devShare:this.toETH(ss.pools[12].devShare),
+      sushiRewardInETH:this.toETH(ss.pools[12].sushiRewardInETH),
+      sushiRewardInCurrency:this.toETH(ss.pools[12].sushiRewardInCurrency)*1000000000000,
+      totalSushiPerBlock:this.toETH(ss.pools[12].totalSushiPerBlock),
+      hourlyROI:this.toETH(ss.pools[12].hourlyROI),
+      dailyROI:this.toETH(ss.pools[12].dailyROI),
+      hourlyInCurrency:this.toETH(ss.pools[12].hourlyInCurrency),
+      dailyInCurrency:this.toETH(ss.pools[12].dailyInCurrency)*1000000000000,
     })
 
 
