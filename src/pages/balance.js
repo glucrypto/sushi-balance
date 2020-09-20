@@ -320,7 +320,7 @@ class Balance extends React.Component {
           </Nav>
           <div className="balance-navbar-content-right">
             <MyButton variant="outlined" color="white" onClick={() => this.connectToMetaMask()}>Connect To MetaMask</MyButton>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <IconButton target="_blank" href="http://twitter.com/cryptogluon">
+            <IconButton target="_blank" href="http://twitter.com/glucrypto">
               <TwitterIcon/>
               </IconButton>
             <IconButton target="_blank" href="https://github.com/cryptogluon/sushi-balance">
@@ -347,7 +347,7 @@ class Balance extends React.Component {
               <Typography component="h4" variant="h5">
               About
               </Typography>
-              &nbsp; This page is an unofficial dashboard made by <a target="_blank" href="https://www.twitter.com/cryptogluon">@cryptogluon</a><br/>
+              &nbsp; This page is an unofficial dashboard made by <a target="_blank" href="https://www.twitter.com/glucrypto">@glucrypto</a><br/>
               &nbsp; All FE code you can verify on <a target="_blank" href="https://github.com/cryptogluon/sushi-balance">https://github.com/cryptogluon/sushi-balance</a><br/>
               &nbsp; Values and assumptions are being actively verified.<br/>
               &nbsp; TVL Rewards and xsushi assumptions are still being verified.<br/>
