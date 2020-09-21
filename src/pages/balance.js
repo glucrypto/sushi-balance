@@ -163,7 +163,30 @@ class Balance extends React.Component {
       
       // Pools
       let pool = ss.pools[i];
-      //console.log(pool)
+      //UNI Unicorn
+      if(i === 18){
+        pool.name = "UNI Unicorn";
+        pool.logo = "UNI";
+      }
+      if(i === 9){
+        pool.logo = 'BAND';
+      }
+      if(i === 2){
+        pool.logo = 'DAI';
+      }
+      if(i === 7){
+        pool.logo = 'UMA';
+      }
+      if(i === 3){
+        pool.logo = 'SUSD';
+      }
+      if(i === 15){
+        pool.logo = 'SRM';
+      }
+      if(i === 13){
+        pool.logo = 'REN';
+      }
+      console.log(pool)
       let shareOfUniswapPool = this.toETH(pool.shareOfUniswapPool);
       let totalSupply = this.toETH(pool.totalSupply);
       let totalStakedToken0 = this.toETH(pool.totalStakedToken0)
@@ -496,7 +519,7 @@ class Balance extends React.Component {
                   <TableRow key={index}>
                     <TableCell align="center" component="th" scope="row"> {row.name} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.totalSushiPerBlock} {this.state.coinArr.logo}</TableCell>
-                    <TableCell align="center" component="th" scope="row"> {row.reserve0}{row.logo}<br/> {row.reserve1}</TableCell>
+                    <TableCell align="center" component="th" scope="row"> {row.reserve0} {row.logo}<br/> {row.reserve1}</TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.uniTotalSupply} ({row.totalSLPStaked} %)</TableCell>
                     <TableCell align="center" component="th" scope="row">{row.totalTokensInPool} </TableCell>
                     <TableCell align="center" component="th" scope="row"> {row.poolTokensStaked} | {row.poolTokensNotStaked}</TableCell>
