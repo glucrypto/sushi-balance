@@ -186,7 +186,7 @@ class Balance extends React.Component {
       if(i === 13){
         pool.logo = 'REN';
       }
-      console.log(pool)
+      //console.log(pool)
       let shareOfUniswapPool = this.toETH(pool.shareOfUniswapPool);
       let totalSupply = this.toETH(pool.totalSupply);
       let totalStakedToken0 = this.toETH(pool.totalStakedToken0)
